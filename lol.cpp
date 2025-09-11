@@ -77,35 +77,61 @@ int main()
         }
         if (startPlay)
         {
-            for (int r = 0; r < ROWS; r++) {
-                for (int c = 0; c < COLS; c++) {
+            bool next[ROWS][COLS] = {false};
+
+            for (int r = 0; r < ROWS; r++)
+            {
+                for (int c = 0; c < COLS; c++)
+                {
                     int neighbours = 0;
-                    for (int i=0; i<2; i++) {
-                        for (int j=0; j<2; j++) {
-                            if (active[r-i][c-j]) {
-                                neighbours++;
+
+                    for (int i = -1; i < 2; i++)
+                    {
+                        for (int j = -1; j < 2; j++)
+                        {
+                            if (i == 0 && j == 0)
+                                continue;
+                            int rr = r + i;
+                            int cc = c + j;
+
+                            if (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS)
+                            {
+                                if (active[rr][cc])
+                                {
+                                    neighbours++;
+                                }
                             }
                         }
                     }
-                
-                    if (neighbours<2)
+                    if (active[r][c])
                     {
-                        active[r][c] = false;
+                        if (neighbours == 2 || neighbours == 3)
+                        {
+                            next[r][c] = true;
+                        }
+                        else
+                        {
+                            next[r][c] = false;
+                        }
                     }
-                    else if(neighbours>3)
+                    else
                     {
-                        active[r][c] = false;
+                        if (neighbours == 3)
+                        {
+                            next[r][c] = true;
+                        }
                     }
-                    else if(neighbours==3)
-                    {
-                        active[r][c] = true;
-                    }
-                    
-                    SDL_Delay(300);
-
                 }
             }
 
+            for (int r = 0; r < ROWS; r++)
+            {
+                for (int c = 0; c < COLS; c++)
+                {
+                    active[r][c] = next[r][c];
+                }
+            }
+            SDL_Delay(300);
         }
 
         SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
